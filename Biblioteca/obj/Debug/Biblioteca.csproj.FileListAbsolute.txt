@@ -1,0 +1,6 @@
+E:\EC5\LP I\N2\ControleFinanceiro\Biblioteca\obj\Debug\Biblioteca.csproj.CoreCompileInputs.cache
+E:\EC5\LP I\N2\ControleFinanceiro\Biblioteca\bin\Debug\Biblioteca.dll
+E:\EC5\LP I\N2\ControleFinanceiro\Biblioteca\bin\Debug\Biblioteca.pdb
+E:\EC5\LP I\N2\ControleFinanceiro\Biblioteca\obj\Debug\Biblioteca.dll
+E:\EC5\LP I\N2\ControleFinanceiro\Biblioteca\obj\Debug\Biblioteca.pdb
+E:\EC5\LP I\N2\ControleFinanceiro\Biblioteca\obj\Debug\Biblioteca.csprojResolveAssemblyReference.cache

@@ -1,0 +1,673 @@
+﻿create TABLE tb_usuario
+( 
+     usuarioid INT PRIMARY KEY, 
+     nome      VARCHAR(40) NOT NULL,
+	 foto image,
+     senha varchar(max) NOT NULL, 
+)
+##
+CREATE TABLE tb_banco 
+( 
+     bancoid INT PRIMARY KEY, 
+     nome    VARCHAR(40) NOT NULL     
+)
+##
+CREATE TABLE tb_tipoconta
+( 
+	codtipo INT PRIMARY KEY, 
+    descricao   VARCHAR(max) not null 
+)
+##
+CREATE TABLE tb_CatGastos 
+( 
+     catgastosid   INT PRIMARY KEY, 
+     descricao     VARCHAR(max) not null, 
+     entrada_saida BIT NOT NULL
+)
+##
+CREATE TABLE tb_gastosMensais
+( 
+	gastosid   INT PRIMARY KEY, 
+    descricao  VARCHAR(max) NOT NULL, 
+    valor      FLOAT, 
+    diaVencimento int,
+	usuarioid int not null,
+	CONSTRAINT fk_usuario_gastosmensais FOREIGN KEY (usuarioid) REFERENCES tb_usuario (usuarioid)
+)
+##
+CREATE TABLE tb_conta 
+( 
+     contaid        INT PRIMARY KEY, 
+     usuarioid      INT NOT NULL, 
+     bancoid        INT NOT NULL, 
+     saldo          FLOAT NOT NULL, 
+     totalprojetado FLOAT NOT NULL, 
+	 tipoconta int NOT NULL,
+	 CONSTRAINT fk_bancoid FOREIGN KEY (bancoid) REFERENCES tb_banco (bancoid),
+	 CONSTRAINT fk_usuario_conta FOREIGN KEY (usuarioid) REFERENCES tb_usuario (usuarioid),
+	 CONSTRAINT fk_TipoConta FOREIGN KEY (tipoconta) REFERENCES tb_tipoconta (codtipo)
+)
+##
+CREATE TABLE tb_tran 
+( 
+     tranId     INT primary key identity,
+     contaId INT NOT NULL, 
+     mes       int NOT NULL, 
+     ano        int NOT NULL,
+	 CONSTRAINT fk_conta_tran FOREIGN KEY (contaId) REFERENCES tb_conta (contaid)
+)
+##
+create table tb_tranDetalhe
+(
+	tranDetalheId int primary key identity,
+	tranId int not null,
+	Dia int not null,
+	descricao varchar(max) not null,
+	valor money not null,
+	catgastosId int not null,
+	CONSTRAINT fk_tran FOREIGN KEY (tranId) REFERENCES tb_tran(tranId),
+	CONSTRAINT fk_catgastos FOREIGN KEY (catgastosId) REFERENCES tb_CatGastos (catgastosId)
+)
+##
+create nonclustered index IndConta on tb_conta(usuarioid)
+##
+create nonclustered index IndTranDetalhe on tb_tranDetalhe(catgastosId)
+##
+create procedure SP_Primeiro(@Tabela varchar(max), @chave varchar(max)) as
+ begin
+	declare @sql varchar(max)
+	set @sql = 'select top 1 * from ' + @Tabela + ' order by ' + @chave
+	exec(@sql)
+ end
+##
+create procedure SP_Ultimo(@Tabela varchar(max), @chave varchar(max)) as
+ begin
+	declare @sql varchar(max)
+	set @sql = 'select top 1 * from ' + @Tabela + ' order by ' + @chave + ' desc'
+	exec(@sql)
+ end
+##
+create procedure SP_Proximo(@Tabela varchar(max), @chave varchar(max), @atual int) as
+ begin
+	declare @sql varchar(max)
+	set @sql = 'select  top 1 * from ' + @Tabela + ' where ' + @chave + ' > ' + cast(@atual as varchar(max)) + ' order by ' + @chave
+	exec(@sql)
+ end
+##
+create procedure SP_Anterior(@Tabela varchar(max), @chave varchar(max), @atual int) as
+ begin
+	declare @sql varchar(max)
+	set @sql = 'select  top 1 * from ' + @Tabela + ' where ' + @chave + ' < ' + cast(@atual as varchar(max)) + ' order by ' + @chave + ' desc'
+	exec(@sql)
+ end
+##
+create procedure SP_ProximoID(@Tabela varchar(max), @chave varchar(max)) as
+ begin
+	declare @sql varchar(max)
+	set @sql = 'select isnull(max(' + @chave + ')+1,1) as MAIOR from ' + @Tabela
+	exec(@sql)
+ end
+##
+create procedure SP_ConsultaSimples(@Tabela varchar(max), @chave varchar(max), @id int) as
+begin
+	declare @sql varchar(max)
+	set @sql = 'select * from ' + @Tabela + ' where ' + @chave + ' = ' + CAST(@id as varchar(max))
+	exec(@sql)
+end
+##
+create procedure SP_IncluirUsuario(@usuarioid int, @Nome varchar(max), @foto image, @senha varchar(max)) as
+ begin	
+	if(@usuarioid <= 0 or len(@Nome) = 0 or len(@senha) <= 0)
+	begin
+		raiserror('Os campos precisam ser preenchidos corretamente',16,1)
+	end	
+	else
+	begin
+		insert into tb_usuario(usuarioid, nome, foto, senha) values(@usuarioid, @Nome, @foto, @senha)		
+	end	
+ end
+##
+create procedure SP_IncluirBanco(@bancoid int, @Nome varchar(40)) as
+begin
+	if(len(@Nome) = 0)
+	begin
+		raiserror('O nome precisa ser inserido',16,1)
+	end
+	else if(@bancoid <= 0)
+	begin
+		raiserror('O id precisa ser maior do que 0',16,1)
+	end
+	else
+	begin
+		insert into tb_banco(bancoid, nome) values(@bancoid, @Nome)		
+	end
+end
+##
+create procedure SP_IncluirTipoConta(@codtipo int, @descricao varchar(40)) as
+begin
+	if(len(@descricao) = 0)
+	begin
+		raiserror('A descrição precisa ser inserida',16,1)
+	end
+	else if(@codtipo <= 0)
+	begin
+		raiserror('O id precisa ser maior do que 0',16,1)
+	end
+	else
+	begin
+		insert into tb_tipoconta(codtipo, descricao) values(@codtipo, @descricao)
+	end
+end
+##
+create procedure SP_IncluirCatGastos(@catgastosid int, @descricao varchar(max), @entrada_saida int) as
+begin
+		if(len(@descricao) = 0)
+		begin			
+			raiserror('A "Descrição" não pode ser nula',16,1)
+		end
+		else if(@catgastosid <=0)
+		begin			
+			raiserror('O "ID" não pode ser menor ou igual a zero',16,1)
+		end
+		else if (@entrada_saida not in (0, 1))
+		begin
+			raiserror('Selecione se é entrada ou saída', 16, 1)
+		end
+		else
+			insert into tb_CatGastos(catgastosid, descricao, entrada_saida) values (@catgastosid, @descricao, @entrada_saida)
+end
+##
+create procedure SP_IncluirGastosMensais(@gastosid int, @descricao varchar(max), @valor float, @diaVencimento int, @usuarioid int) as
+begin
+	if(@valor = 0)
+	begin
+		set @valor = null
+	end
+	if(@diaVencimento = 0)
+	begin
+		set @diaVencimento = null
+	end
+	if(@valor < 0)
+	begin
+		raiserror('Valor não pode ser negativo!', 16, 1)		
+	end	
+	else if (@diaVencimento < 0)
+	begin
+		raiserror('O dia não pode ser negativo!', 16, 1)
+	end
+	else if (len(@descricao) = 0)
+	begin
+		raiserror('Descrição é obrigatório!', 16, 1)
+	end
+	else
+	begin
+		insert into tb_gastosMensais(gastosid, descricao, valor, diaVencimento, usuarioid)
+		values(@gastosid, @descricao, @valor, @diaVencimento, @usuarioid)		
+	end
+end
+##
+create procedure SP_IncluirConta(@contaid int, @usuarioid int, @bancoid int, @tipoconta int) as
+begin
+	if(@contaid <= 0)
+	begin			
+			raiserror('O "ID" não pode ser menor ou igual a zero',16,1)
+	end
+	else if(@usuarioid <= 0)
+	begin			
+			raiserror('O ID do usuário não pode ser menor ou igual a zero',16,1)
+	end
+	else if(@bancoid <= 0)
+	begin			
+			raiserror('Selecione um banco',16,1)
+	end
+	else if(@tipoconta <=0)
+	begin			
+			raiserror('Selecione um tipo de conta',16,1)
+	end
+	else
+	begin
+		insert into tb_conta (contaid, usuarioid, bancoid, saldo, totalprojetado, tipoconta)
+		values (@contaid, @usuarioid, @bancoid, 0, 0, @tipoconta)
+	end
+end
+##
+create procedure SP_IncluirTransacaoDetalhe(@tranId int, @dia int, @descricao varchar(max), @valor float, @catgastosId int) as
+begin
+	if(@dia <= 0 or @dia > 31)
+	begin
+		raiserror('Dia inválido', 16, 1)
+	end
+	else if (len(@descricao) = 0)
+	begin
+		raiserror('Descrição é obrigatório', 16, 1)
+	end
+	else if(@valor <= 0)
+	begin
+		raiserror('Valor inválido', 16, 1)
+	end
+	else
+	begin		
+		insert into tb_tranDetalhe(tranId, Dia, descricao, valor, catgastosId) values (@tranId, @dia, @descricao, @valor, @catgastosId)
+		declare @contaid int = (select contaId from tb_tran where tranId = @tranId)
+		declare @tipogasto int = (select entrada_saida from tb_CatGastos where catgastosid = @catgastosId)
+		if(@tipogasto = 0)
+		begin
+			set @valor = 0 - @valor
+		end		
+		update tb_conta set saldo += @valor where contaid = @contaid
+	end
+end
+##
+create procedure SP_IncluirTransacaoMestre(@contaid int, @mes int, @ano int) as
+begin
+	declare @ret int = (select count(tranId) from tb_tran where contaId = @contaid and mes = @mes and ano = @ano)
+	if(@ret in(0, null))
+	begin
+		if(@mes < 1 or @mes > 12)
+		begin
+			raiserror('Mês não existe', 16, 1)
+		end
+		else if(@ano <= 0)
+		begin
+			raiserror('Ano não pode ser negativo', 16, 1)
+		end
+		insert into tb_tran (contaId, mes, ano) values(@contaid, @mes, @ano)		
+	end	
+end
+##
+create procedure SP_AlterarUsuario(@usuarioid int, @Nome varchar(max), @Foto image, @Senha varchar(max)) as
+begin
+	update tb_usuario set nome = isnull(@Nome, nome), foto = isnull(@Foto, foto), senha = isnull(@Senha, senha) where usuarioid = @usuarioid
+end
+##
+create procedure SP_AlterarBanco(@bancoid int, @Nome varchar(max)) as
+begin
+	update tb_banco set nome = isnull(@Nome, nome) where bancoid = @bancoid
+end
+##
+create procedure SP_AlterarTipoConta(@codtipo int, @descricao varchar(max)) as
+begin
+	update tb_tipoconta set descricao = isnull(@descricao, descricao) where codtipo = @codtipo
+end
+##
+create procedure SP_AlterarCatGastos(@catgastosid int, @descricao varchar(max), @entrada_saida bit) as
+begin
+	update tb_CatGastos set descricao = isnull(@descricao, descricao), entrada_saida = ISNULL(@entrada_saida, entrada_saida) where catgastosid = @catgastosid
+end
+##
+create procedure SP_AlterarGastosMensais(@gastosid int, @descricao varchar(max), @valor float, @diaVencimento int, @usuarioid int) as
+begin
+	if(@valor = 0)
+	begin
+		set @valor = null
+	end
+	if(@diaVencimento = 0)
+	begin
+		set @diaVencimento = null
+	end
+	update tb_gastosMensais set descricao = ISNULL(@descricao, descricao), valor = @valor, diaVencimento = @diaVencimento
+	where gastosid = @gastosid
+end
+##
+create procedure SP_AlterarConta(@contaid int, @usuarioid int, @bancoid int, @tipoconta int) as
+begin
+	update tb_conta set bancoid = isnull(@bancoid, bancoid), tipoconta = isnull(@tipoconta, tipoconta) where contaid = @contaid
+end
+##
+CREATE PROCEDURE SP_ExcluirUsuario(@Id INT) AS 
+BEGIN 
+    DELETE FROM tb_usuario 
+    WHERE  usuarioid = @Id 
+END
+##
+create procedure SP_ExcluirBanco(@id int) as
+begin
+	delete from tb_banco where bancoid = @id
+end
+##
+create procedure SP_ExcluirTipoConta(@id int) as
+begin
+	delete from tb_tipoconta where codtipo = @id
+end
+##
+create procedure SP_ExcluirConta(@id int) as
+begin
+	delete from tb_conta where bancoid = @id
+end
+##
+create procedure SP_ExcluirCatGastos(@id int) as
+begin
+	delete from tb_CatGastos where catgastosid = @id
+end
+##
+create procedure SP_ExcluirGastosMensais(@id int) as
+begin
+	delete from tb_gastosMensais where gastosid = @id
+end
+##
+create procedure SP_ExcluirTran(@id int) as
+begin
+	delete from tb_tran where tranId = @id
+end
+##
+create procedure SP_ExcluirTranDetalhe(@id int) as
+begin
+	delete from tb_tranDetalhe where tranDetalheId = @id
+end
+##
+CREATE TRIGGER tg_excluirusuario 
+ON tb_usuario 
+instead OF DELETE 
+AS 
+BEGIN 
+    DECLARE @usuarioId INT =(SELECT usuarioid 
+    FROM   deleted) 
+
+    DELETE FROM tb_conta 
+    WHERE  usuarioid = @usuarioId 
+		        
+    DELETE FROM tb_gastosMensais 
+    WHERE usuarioid = @usuarioId
+
+    DELETE FROM tb_usuario 
+    WHERE  usuarioid = @usuarioId
+END
+##
+create trigger tg_excluirbanco on tb_banco instead of delete as
+begin
+	declare @bancoid int = (select bancoid from deleted)
+	update tb_conta set bancoid = null where bancoid = @bancoid
+	delete from tb_banco where bancoid = @bancoid
+end
+##
+create trigger tg_excluirtipoconta on tb_tipoconta instead of delete as
+begin
+	declare @tipocontaid int = (select codtipo from deleted)
+	update tb_conta set tipoconta = null where tipoconta = @tipocontaid
+	delete from tb_tipoconta where codtipo = @tipocontaid
+end
+##
+create trigger tg_excluircatgastos on tb_CatGastos instead of delete as
+begin
+	declare @catgastosid int = (select catgastosid from tb_CatGastos)
+	update tb_tranDetalhe set catgastosId = null where catgastosId = @catgastosid
+	delete from tb_CatGastos where catgastosid = @catgastosid
+end
+##
+CREATE TRIGGER tg_excluirconta 
+ON tb_conta 
+instead OF DELETE 
+AS 
+BEGIN 	
+    DECLARE @contaId INT =(SELECT contaid 
+    FROM   deleted)
+
+    DELETE FROM tb_tran 
+    WHERE  contaid = @contaId 
+	
+    DELETE FROM tb_conta 
+    WHERE  contaid = @contaId
+END
+##
+create trigger tg_excluirTran on tb_tran instead of delete as
+begin
+	declare @tranId int =(select tranId from deleted)
+	delete from tb_tranDetalhe where tranId = @tranId
+	delete from tb_tran where tranId = @tranId
+end
+##
+create trigger tg_excluirTranDetalhe on tb_tranDetalhe instead of delete as
+begin
+	declare @tranDetalheId int =(select tranDetalheId from deleted)
+	declare @tranId int = (select tranId from deleted)
+	declare @catgastosId int =(select catgastosId from deleted)
+	declare @contaid int = (select contaId from tb_tran where tranId = @tranId)
+	declare @tipogasto int = (select entrada_saida from tb_CatGastos where catgastosid = @catgastosId)
+	declare @valor money = (select valor from deleted)
+	if(@tipogasto = 1)
+	begin
+		set @valor = 0 - @valor
+	end		
+	update tb_conta set saldo += @valor where contaid = @contaid
+	delete from tb_tranDetalhe where tranDetalheId = @tranDetalheId	
+end
+##
+create procedure SP_ListaUsuario(@nome varchar(max)) as
+begin
+	declare @sql varchar(max)
+	set @sql = 'select * from tb_usuario'
+	if(@nome != '')
+	begin
+		set @nome = '''' + @nome + ''''
+		set @sql += ' where nome like ' + @nome
+	end
+	exec(@sql)
+end
+##
+create procedure SP_ListaBanco(@nome varchar(max)) as
+begin	
+	declare @sql varchar(max)
+	set @sql = 'select * from tb_banco'
+	if(@nome != '')
+	begin
+		set @nome = '''' + @nome + ''''
+		set @sql += ' where nome like ' + @nome
+	end
+	exec(@sql)
+end
+##
+create procedure SP_ListaTipoConta(@descricao varchar(40)) as
+begin	
+	declare @sql varchar(max)
+	set @sql = 'select * from tb_tipoconta'
+	if(@descricao != '')
+	begin
+		set @descricao = '''' + @descricao + ''''
+		set @sql += ' where descricao like ' + @descricao
+	end
+	exec(@sql)
+end
+##
+create procedure SP_ListaCatGastos(@descricao varchar(max), @entrada_saida int) as
+begin
+	declare @sql varchar(max)
+	if(@descricao != '')
+	begin
+		set @descricao = ' where descricao like ' + '''' + @descricao + ''''
+	end
+	else
+	begin
+		set @descricao = ' where descricao like ''%%'''
+	end
+	set @sql = 'select * from tb_CatGastos' + @descricao
+	if(@entrada_saida in (0, 1))
+	begin
+		set @sql += ' and entrada_saida = ' + CAST(@entrada_saida as varchar(1))
+	end
+	exec(@sql)
+end
+##
+create procedure SP_ListaGastosMensais(@usuarioid int, @descricao varchar(max), @dia int) as
+begin
+	declare @sql varchar(max) = 'select * from tb_gastosMensais where usuarioid = ' + cast(@usuarioid as varchar(3)) + ' order by diaVencimento'
+	if(len(@descricao) != 0)
+	begin
+		set @sql += ' and descricao = ' + '''' + @descricao + ''''
+	end
+	if(@dia > 0)
+	begin
+		set @sql += ' and diaVencimento = ' + cast(@dia as varchar(2))
+	end
+	exec(@sql)
+end
+##
+create procedure SP_ListaContaCompleta(@usuarioid int, @contaid int, @bancoid int, @tipoconta int) as
+begin
+	declare @sql varchar(max) = 'select c.contaid, b.nome, t.descricao, c.saldo, c.totalprojetado from tb_conta c
+	inner join tb_banco b on b.bancoid = c.bancoid
+	inner join tb_tipoconta t on t.codtipo = c.tipoconta
+	where c.usuarioid = ' + cast(@usuarioid as varchar(3))
+	if(@contaid != 0)
+	begin
+		set @sql += ' and contaid = ' + CAST(@contaid as varchar(3))
+	end
+	if(@bancoid != 0)
+	begin
+		set @sql += ' and bancoid = ' + CAST(@bancoid as varchar(3))
+	end
+	if(@tipoconta != 0)
+	begin
+		set @sql += ' and tipoconta = ' + CAST(@tipoconta as varchar(3))
+	end
+	exec(@sql)
+end
+##
+create procedure SP_ListaConta(@usuarioid int) as
+begin
+	select * from tb_conta where usuarioid = @usuarioid
+end
+##
+create procedure SP_ListaTranMestre(@usuarioid int, @contaId int, @mes int, @ano int) as
+begin	
+	declare @sql varchar(max)
+	set @sql = 'select t.* from tb_tran t	
+	inner join tb_conta c on c.contaid = t.contaId
+	where c.usuarioid = ' + CAST(@usuarioid as varchar(4))
+	if(@contaId > 0)
+	begin
+		set @sql += ' and t.contaId = ' + cast(@contaId as varchar(3))
+	end
+	if(@mes > 0)
+	begin
+		set @sql += ' and t.mes = ' + cast(@mes as varchar(2))
+	end
+	if(@ano != 0)
+	begin
+		set @sql += ' and t.ano = ' + cast(@ano as varchar(5))
+	end
+	exec(@sql)
+end
+##
+create procedure SP_ListaTranDetalhe(@usuarioid int, @contaid int, @catgastosid int, @mes int, @ano int) as
+begin
+	declare @sql varchar(max) = 'select td.tranDetalheId, c.contaid, td.Dia, t.mes, t.ano, td.descricao, cg.descricao as Categoria, 
+	td.valor from tb_tranDetalhe td
+	inner join tb_CatGastos cg on cg.catgastosid = td.catgastosId
+	inner join tb_tran t on t.tranId = td.tranId
+	inner join tb_conta c on c.contaid = t.contaId
+	where c.usuarioid = ' + cast(@usuarioid as varchar(3))
+	if(@contaid > 0)
+	begin
+		set @sql += ' and t.contaId = ' + cast(@contaid as varchar(3))
+	end
+	if(@catgastosid > 0)
+	begin
+		set @sql += ' and cg.catgastosid = ' + cast(@catgastosid as varchar(4))
+	end
+	if(@mes > 0)
+	begin
+		set @sql += ' and t.mes = ' + cast(@mes as varchar(2))
+	end
+	if(@ano != 0)
+	begin
+		set @sql += ' and t.ano = ' + cast(@ano as varchar(5))
+	end
+	exec(@sql)
+end
+##
+create procedure SP_Grafico(@usuarioid int, @rb int) as
+begin
+	if(@rb = 1)
+	begin
+		select * from fnc_GrafGastos(@usuarioid)
+	end
+	else if(@rb = 2)
+	begin
+		select * from fnc_GrafMes(@usuarioid)
+	end
+end
+##
+create function fnc_GrafGastos(@usuarioid int) returns table as
+	return select SUM(td.valor) as 'valor', cg.descricao from tb_tranDetalhe td
+	inner join tb_tran t on t.tranId = td.tranId
+	inner join tb_CatGastos cg on td.catgastosId = cg.catgastosid
+	inner join tb_conta c on c.contaid = t.contaId
+	where c.usuarioid = @usuarioid
+	group by cg.descricao
+##
+create function fnc_GrafMes(@usuarioid int) returns table as
+	return select SUM(td.valor) as 'valor', t.mes from tb_tranDetalhe td
+	inner join tb_tran t on t.tranId = td.tranId
+	inner join tb_CatGastos cg on td.catgastosId = cg.catgastosid
+	inner join tb_conta c on c.contaid = t.contaId
+	where c.usuarioid = 1 and cg.entrada_saida = 0
+	group by t.mes
+##
+CREATE FUNCTION Calculatotalprojetado(@ID INT) 
+returns FLOAT 
+AS 
+  BEGIN 
+      DECLARE @Total AS FLOAT = 0 
+      DECLARE @DataAtual VARCHAR(15) = (SELECT CONVERT(VARCHAR, Getdate(), 103)) 
+
+      SET @Total =(SELECT Sum(td.valor) 
+                   FROM   tb_tran AS T 
+                          INNER JOIN tb_conta AS C 
+                                  ON T.contaid = C.contaid 
+						  INNER JOIN tb_tranDetalhe td on td.tranId = t.tranId
+                   WHERE  Datediff(day, Cast(@DataAtual AS DATE), 
+				   CAST(cast(td.Dia as varchar(2)) + '/' + cast(t.mes as varchar(2)) + '/' + cast(t.ano as varchar(4)) as date)) > 10
+                   GROUP  BY T.contaid 
+                   HAVING T.contaid = @ID) 
+
+      IF( @Total IS NULL ) 
+        SET @Total = 0 
+
+      SET @Total = @Total 
+                   + (SELECT Sum(M.valor) 
+                      FROM   tb_conta AS C 
+                             INNER JOIN tb_usuario AS U 
+                                     ON U.usuarioid = C.usuarioid                              
+                             INNER JOIN tb_gastosmensais AS M 
+                                     ON M.usuarioid = U.usuarioid
+                      WHERE  Datediff(day, Cast(@DataAtual AS DATE), 
+                             M.diaVencimento) < 30 
+                      GROUP  BY C.contaid 
+                      HAVING C.contaid = @ID) 
+
+      IF( @Total IS NULL ) 
+        SET @Total = 0 
+      RETURN @Total 
+  END 
+##
+CREATE PROCEDURE Sp_atualizatotalprojetado AS 
+BEGIN 
+    DECLARE cu_totalprojetado CURSOR FOR 
+    SELECT contaid, 
+            totalprojetado 
+    FROM   tb_conta 
+    FOR UPDATE 
+    DECLARE @idconta INT, 
+            @total   FLOAT 
+
+    OPEN cu_totalprojetado 
+
+    FETCH cu_totalprojetado INTO @idconta, @total 
+
+    WHILE @@FETCH_STATUS = 0 
+    BEGIN 
+        UPDATE tb_conta 
+        SET    totalprojetado = 
+                ( saldo - dbo.Calculatotalprojetado(@idconta) ) 
+        WHERE  CURRENT OF cu_totalprojetado 
+
+        FETCH cu_totalprojetado INTO @idconta, @total 
+    END 
+
+    CLOSE cu_totalprojetado 
+
+    DEALLOCATE cu_totalprojetado 
+END
+##
+
+--fim

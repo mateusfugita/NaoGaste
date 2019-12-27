@@ -1,0 +1,352 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{AA7E649F-F513-4B54-936D-57104C2996C4}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ControleFinanceiro</RootNamespace>
+    <AssemblyName>ControleFinanceiro</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>shoppaymentorderbuy-04_icon-icons.com_73886.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="frCadastro.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frCadastro.Designer.cs">
+      <DependentUpon>frCadastro.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frCadastroConta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frCadastroConta.Designer.cs">
+      <DependentUpon>frCadastroConta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frCadastroGastosMensais.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frCadastroGastosMensais.Designer.cs">
+      <DependentUpon>frCadastroGastosMensais.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frConsultaBanco.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frConsultaBanco.Designer.cs">
+      <DependentUpon>frConsultaBanco.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frConsultaCatGastos.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frConsultaCatGastos.Designer.cs">
+      <DependentUpon>frConsultaCatGastos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frConsultaConta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frConsultaConta.Designer.cs">
+      <DependentUpon>frConsultaConta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frConsultaGastosMensais.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frConsultaGastosMensais.Designer.cs">
+      <DependentUpon>frConsultaGastosMensais.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frConsultaPadrao.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frConsultaPadrao.Designer.cs">
+      <DependentUpon>frConsultaPadrao.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frConsultaTipoConta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frConsultaTipoConta.Designer.cs">
+      <DependentUpon>frConsultaTipoConta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frConsultaTransacao.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frConsultaTransacao.Designer.cs">
+      <DependentUpon>frConsultaTransacao.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frConsultaUsuario.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frConsultaUsuario.Designer.cs">
+      <DependentUpon>frConsultaUsuario.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frCriarBanco.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frCriarBanco.Designer.cs">
+      <DependentUpon>frCriarBanco.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frEntrar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frEntrar.Designer.cs">
+      <DependentUpon>frEntrar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frGrafico.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frGrafico.Designer.cs">
+      <DependentUpon>frGrafico.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frPrincipal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frPrincipal.Designer.cs">
+      <DependentUpon>frPrincipal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frSobre.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frSobre.Designer.cs">
+      <DependentUpon>frSobre.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frTransacao.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frTransacao.Designer.cs">
+      <DependentUpon>frTransacao.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ucBanco.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucBanco.Designer.cs">
+      <DependentUpon>ucBanco.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucCatGastos.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucCatGastos.Designer.cs">
+      <DependentUpon>ucCatGastos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucConta.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucConta.Designer.cs">
+      <DependentUpon>ucConta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucEntrar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucEntrar.Designer.cs">
+      <DependentUpon>ucEntrar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucGastosMensais.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucGastosMensais.Designer.cs">
+      <DependentUpon>ucGastosMensais.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucPadrao.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucPadrao.Designer.cs">
+      <DependentUpon>ucPadrao.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucTipoConta.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucTipoConta.Designer.cs">
+      <DependentUpon>ucTipoConta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucTranMestre.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucTranMestre.Designer.cs">
+      <DependentUpon>ucTranMestre.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ucUsuario.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ucUsuario.Designer.cs">
+      <DependentUpon>ucUsuario.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="frCadastro.resx">
+      <DependentUpon>frCadastro.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frCadastroConta.resx">
+      <DependentUpon>frCadastroConta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frCadastroGastosMensais.resx">
+      <DependentUpon>frCadastroGastosMensais.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frConsultaBanco.resx">
+      <DependentUpon>frConsultaBanco.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frConsultaCatGastos.resx">
+      <DependentUpon>frConsultaCatGastos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frConsultaConta.resx">
+      <DependentUpon>frConsultaConta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frConsultaGastosMensais.resx">
+      <DependentUpon>frConsultaGastosMensais.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frConsultaPadrao.resx">
+      <DependentUpon>frConsultaPadrao.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frConsultaTipoConta.resx">
+      <DependentUpon>frConsultaTipoConta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frConsultaTransacao.resx">
+      <DependentUpon>frConsultaTransacao.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frConsultaUsuario.resx">
+      <DependentUpon>frConsultaUsuario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frCriarBanco.resx">
+      <DependentUpon>frCriarBanco.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frEntrar.resx">
+      <DependentUpon>frEntrar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frGrafico.resx">
+      <DependentUpon>frGrafico.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frPrincipal.resx">
+      <DependentUpon>frPrincipal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frSobre.resx">
+      <DependentUpon>frSobre.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frTransacao.resx">
+      <DependentUpon>frTransacao.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucBanco.resx">
+      <DependentUpon>ucBanco.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucCatGastos.resx">
+      <DependentUpon>ucCatGastos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucConta.resx">
+      <DependentUpon>ucConta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucEntrar.resx">
+      <DependentUpon>ucEntrar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucGastosMensais.resx">
+      <DependentUpon>ucGastosMensais.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucPadrao.resx">
+      <DependentUpon>ucPadrao.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucTipoConta.resx">
+      <DependentUpon>ucTipoConta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucTranMestre.resx">
+      <DependentUpon>ucTranMestre.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ucUsuario.resx">
+      <DependentUpon>ucUsuario.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Biblioteca\Biblioteca.csproj">
+      <Project>{358944E0-8691-46B3-9CDA-640301599DF0}</Project>
+      <Name>Biblioteca</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-salvar-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-mais-filled-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-excluir-filled-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-sincronizar-filled-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-excluir-filled-50 %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-pesquisar-filled-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-primeiro-1-filled-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-voltar-filled-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-avançar-filled-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-último-1-filled-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="shoppaymentorderbuy-04_icon-icons.com_73886.ico" />
+    <Content Include="SQL.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
